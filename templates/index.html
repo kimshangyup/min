@@ -2,7 +2,7 @@
 <head>
 	
 
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
 </script>
 
 <!-- Latest compiled and minified CSS -->
@@ -19,10 +19,16 @@
 <body>
 	
 
+{% if session.logged_in %}
+<a href="/logout">logout</a>
+{% else %}
+<a href="/login">login</a>
+{% endif %}
+<a href="/signup">signup</a>
 
 
-
-
-
+{% if session.logged_in %}
+{{session.username}}님 환영합니다
+{% endif %}
 </body>
 </html>

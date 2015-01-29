@@ -1,8 +1,8 @@
 from controller import db
 
 
-class User(db.Model):
-	__tablename__= 'users'
+class User2(db.Model):
+	__tablename__= 'users2'
 
 	id= db.Column(db.Integer, primary_key=True)
 	username= db.Column(db.String(), unique=True, nullable=False)
