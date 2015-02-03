@@ -1,6 +1,8 @@
 from flask import request, render_template, session, redirect, url_for, flash
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
+import requests
+from itsdangerous import URLSafeSerializer
 
 from __init__ import app
 
@@ -60,6 +62,10 @@ def login_check():
 		if user_query.check_password_hash(password):
 			session['logged_in']=True
 			session['username']=username
+			if user_query.is_admin:
+				session['is_admin']=True
+			else:
+				session['is_admin']=False
 			return redirect(url_for('index'))
 		else:
 			return 'password wrong'
@@ -78,10 +84,39 @@ def signup_check():
 	user2=User2(username,password,email)
 	db.session.add(user2)
 	db.session.commit()
+	send_simple_message(username=username,email=email)
 	return redirect(url_for('index'))
 
+
+@app.route('/admin')
+def admin_page():
+	if 'is_admin' in session and session['is_admin']:
+		return 'Admin'
+	else:
+		return 'User'
+
+
+
+@app.route('/activate/<hash_value>')
+def activate(hash_value):
+	s=URLSafeSerializer(app.config.get('SECRET_KEY'))
+	a=s.loads(hash_value)
+	return a
 
 @app.before_request
 def make_session_timeout():
 	session.permanent=True
 	app.permanent_session_lifetime=timedelta(minutes=5)
+
+def send_simple_message(username,email):
+	s=URLSafeSerializer(app.config.get('SECRET_KEY'))
+	hash_value=s.dumps(email)
+	return requests.post(
+		"https://api.mailgun.net/v2/sandbox79e52ac751eb4923ba69abb7fa180171.mailgun.org/messages",
+		auth=("api", "key-c6b7a97cf8c37a902f6ebd8e85edfa65"),
+		data={"from": "no-reply <no-reply@no-reply.com>",
+			u"to": username+u"<"+email+u">",
+			"subject": "Hello",
+			"text": "http://54.64.200.183:5000/activate/"+hash_value})
+
+

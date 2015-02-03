@@ -15,6 +15,7 @@ class User2(Base):
 	email= db.Column(db.String(), unique=True)
 	posts=db.relationship('Post2',backref='author',lazy='dynamic')
 	is_admin=db.Column(db.Boolean, default=False)
+	is_active=db.Column(db.Boolean, default=False)
 
 	def __init__(self, username, password, email):
 		self.username=username
