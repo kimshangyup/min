@@ -1,0 +1,40 @@
+<html>
+<head>
+	
+<style>
+
+textarea{
+	resize:none;
+	width:200px;
+	height:150px;
+}
+</style>
+
+</head>
+<body>
+
+<form action="/write/check" method='POST'>
+<div>
+	<label for="post_title">글 제목</label>
+	<div>
+		<input name="title" id="post_title" type="text">
+	</div>
+</div>
+
+<div>
+	<label for="post_body">글 내용</label>
+	<div>
+		<textarea name="text" id="post_body" cols="30" rows="10"></textarea>
+	</div>
+</div>
+
+<div>
+	<div>
+		<button type="submit">글 쓰기</button>
+	</div>
+</div>
+
+</form>
+
+</body>
+</html>

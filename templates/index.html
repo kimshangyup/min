@@ -18,6 +18,7 @@
 </head>
 <body>
 	
+<a href="/write">write</a><br>
 
 {% if session.logged_in %}
 <a href="/logout">logout</a>
@@ -30,5 +31,10 @@
 {% if session.logged_in %}
 {{session.username}}님 환영합니다
 {% endif %}
+<br>
+{% for i in post_query %}
+{{i.title}} - {{i.body}} by {{i.author.username}}<br>
+{% endfor %}
+
 </body>
 </html>

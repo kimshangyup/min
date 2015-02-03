@@ -11,9 +11,28 @@ from models import *
 
 @app.route('/')
 def index():
-	return render_template('index.html')
+	post_query=Post2.query.order_by('id desc').all()
+	return render_template('index.html',post_query=post_query)
 
+@app.route('/write')
+def write():
+	if 'logged_in' in session:
+		if session['logged_in']==True:
+			return render_template('write.html')
+		else:
+			return redirect(url_for('login'))
+	else:
+		return redirect(url_for('index'))
 
+@app.route('/write/check',methods=['POST'])
+def write_check():
+	post_title=request.form['title']
+	post_body=request.form['text']
+	user_query=User2.query.filter(User2.username==session['username']).first()
+	p=Post2(user_query.id,post_title,post_body)
+	db.session.add(p)
+	db.session.commit()
+	return redirect(url_for('index'))
 
 
 @app.route('/logout')
@@ -38,7 +57,7 @@ def login_check():
 	password=request.form['password']
 	user_query=User2.query.filter(User2.username==username).first()
 	if user_query:
-		if user_query.password==password:
+		if user_query.check_password_hash(password):
 			session['logged_in']=True
 			session['username']=username
 			return redirect(url_for('index'))
