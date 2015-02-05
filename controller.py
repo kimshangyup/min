@@ -1,3 +1,5 @@
+#-*- coding:utf-8 -*-
+
 from flask import request, render_template, session, redirect, url_for, flash
 from flask.ext.sqlalchemy import SQLAlchemy
 from datetime import timedelta
@@ -60,12 +62,15 @@ def login_check():
 	user_query=User2.query.filter(User2.username==username).first()
 	if user_query:
 		if user_query.check_password_hash(password):
-			session['logged_in']=True
-			session['username']=username
-			if user_query.is_admin:
-				session['is_admin']=True
+			if user_query.is_active==True:
+				session['logged_in']=True
+				session['username']=username
+				if user_query.is_admin:
+					session['is_admin']=True
+				else:
+					session['is_admin']=False
 			else:
-				session['is_admin']=False
+				return u'메일 인증 먼저 하세요'
 			return redirect(url_for('index'))
 		else:
 			return 'password wrong'
@@ -101,7 +106,11 @@ def admin_page():
 def activate(hash_value):
 	s=URLSafeSerializer(app.config.get('SECRET_KEY'))
 	a=s.loads(hash_value)
-	return a
+	user_query=User2.query.filter(User2.email==a).first()
+	user_query.is_active=True
+	db.session.add(user_query)
+	db.session.commit()
+	return u'인증이 완료되었습니다'
 
 @app.before_request
 def make_session_timeout():
