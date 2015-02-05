@@ -14,11 +14,39 @@
 	
 
 <form action="/signup/check" method="POST">
-ID: <input type="text" name="username"><input type="button" value="중복확인" id="doublecheck"><br>
+ID: <input type="text" name="username" id="username"><input type="button" value="중복확인" id="doublecheck"><br>
 PW: <input type="password" name="password"><br>
 e-mail: <input type="text" name="email"><br>
 <input type="submit">
 </form>
 
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		
+var doublecheck=function(){
+$.ajax({
+			url:'/doublecheck',
+			type:'GET',
+			data:{'username':$('#username').val()},
+			success:function(msg){
+				if(msg==1){
+					alert('사용 가능')
+				}
+				else{
+					alert('사용 불가')
+				}
+			}
+		})
+}		
+
+
+
+$('#doublecheck').on('click',doublecheck)
+
+	})
+
+</script>
 </body>
 </html>

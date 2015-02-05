@@ -93,6 +93,15 @@ def signup_check():
 	return redirect(url_for('index'))
 
 
+@app.route('/doublecheck')
+def doublecheck():
+	username=request.args.get('username')
+	name=User2.query.filter(User2.username==username).first()
+	if name:
+		return '0'
+	else:
+		return '1'
+
 @app.route('/admin')
 def admin_page():
 	if 'is_admin' in session and session['is_admin']:
